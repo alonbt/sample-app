@@ -7,17 +7,17 @@ describe "Authentication" do
     before {visit signin_path }
     
     it {should have_selector("h1",    text: "Sign in") }
-    it {should have_selector("title", text: "Sign in")}
+    it {should have_title("Sign in")}
   
     describe "with invalid information" do
       before {click_button "Sign in" }
       
       it {should have_selector("title", text: "Sign in")}
-      it {should have_selector("div.alert.alert-error", text: "Invalid")}
+      it {should have_error_message('Invalid')}
       
       describe "after visitin another page" do
         before {visit root_path}
-        it {should_not have_selector("div.alert.alert-error")}
+        it {should_not have_error_message('Invalid')}
       end
     end
     
