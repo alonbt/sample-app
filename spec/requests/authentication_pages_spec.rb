@@ -12,12 +12,14 @@ describe "Authentication" do
     describe "with invalid information" do
       before {click_button "Sign in" }
       
-      it {should have_selector("title", text: "Sign in")}
-      it {should have_error_message('Invalid')}
+      it { should have_selector("title", text: "Sign in") }
+      it { should have_error_message('Invalid') }
+      it { should_not have_link('Sign Out') }
+      it { should_not have_link('Settings') }
       
       describe "after visitin another page" do
-        before {visit root_path}
-        it {should_not have_error_message('Invalid')}
+        before { visit root_path }
+        it { should_not have_error_message('Invalid') }
       end
     end
     
@@ -53,6 +55,13 @@ describe "Authentication" do
         
         describe "after sign in" do
           it { should have_selector("title", text: "Edit user" )}
+          
+          describe "after signing in again" do
+            before { sign_in user }            
+            it "should render the default (profile) page" do
+              page.should have_selector("title", text: user.name)
+            end
+          end
         end
         
       end

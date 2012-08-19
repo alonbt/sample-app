@@ -22,8 +22,10 @@ describe "User Pages" do
   describe "signup" do
     before { visit signup_path }
     
-    let(:submit) { "Create my account"}
+     it { should have_button("Create my account") }
     
+    let(:submit) { "Create my account"}
+        
     describe "with invalid information" do
       it "should not create a user" do
         expect { click_button submit }.not_to change(User, :count)
@@ -57,7 +59,7 @@ describe "User Pages" do
         it {should have_selector("title", text: user.name) }
         it {should have_selector("div.alert.alert-success", text:"Welcome #{user.name}") }
         it {should have_link('Sign out') }
-      end
+      end 
     end
   end
   
@@ -69,6 +71,8 @@ describe "User Pages" do
       visit edit_user_path(user)
     end
     
+    it { should have_button("Save changes") }
+
     describe "page" do
       it { should have_selector("h1", text: "Update your profile") }
       it { should have_selector("title", text: "Edit user") }
@@ -138,6 +142,11 @@ describe "User Pages" do
           visit users_path
         end
         
+        
+        it "can not delete his own link" do
+          expect { delete user_path(admin) }.to_not change(User, :count).by(-1)
+        end
+        
         it { should have_link("Delete", href: user_path(User.first)) }
         it "should be able to delete another user" do
           expect { click_link("Delete") }.to change(User, :count).by(-1)
@@ -154,13 +163,19 @@ describe "User Pages" do
         describe "submitting a DELETE request to the Users#destroy action" do
           before { delete user_path(user) }
           specify { response.should redirect_to(root_path) }
-        end
-        
-        
-        
+        end      
       end
-      
+    end
+  end 
+  describe "signed in users" do
+    let(:user) { FactoryGirl.create(:user)}   
+    before do
+      sign_in user
     end
     
-  end 
+    describe "submitting a POST request to the Users#new action" do
+      before { redirect_to(signup_path) }
+      it { should have_selector('title', text: 'Alon Bartur test app') }
+    end
+  end    
 end
